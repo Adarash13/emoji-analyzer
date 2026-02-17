@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Emotion Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="glass" style="margin: 1rem; position: sticky; top: 1rem; z-index: 100;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.5rem;">😊</span>
+                <h1 style="margin: 0; font-size: 1.5rem; color: var(--primary);">EmoAnalyzer</h1>
+            </div>
+            <div style="display: flex; gap: 1rem;">
+                <a href="/" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a href="/history" class="btn btn-secondary">
+                    <i class="fas fa-history"></i> History
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Emoji Emotion Analyzer © 2024 | Powered by AI & Flask</p>
+            <p style="margin-top: 0.5rem; opacity: 0.8;">
+                <small>Analyze emotions in text and emojis with machine learning</small>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingSpinner" class="loading glass" 
+         style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+        <div class="spinner"></div>
+        <p>Analyzing emotions...</p>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

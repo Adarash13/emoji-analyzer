@@ -1,0 +1,447 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Emoji Emotion Analyzer</h1>
+        <p>Analyze emotions in your text and emojis using AI-powered sentiment analysis</p>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Input Section -->
+        <div class="card glass">
+            <h2><i class="fas fa-keyboard"></i> Enter Your Text</h2>
+            <textarea id="textInput" class="text-input" 
+                      placeholder="Type or paste your text here... Include emojis like 😊 or 😢 for analysis!
+
+Example: I'm so happy today! 😄 Just got promoted at work 🎉 But I'm also nervous about the new responsibilities 😰"></textarea>
+            
+            <div class="button-group">
+                <button id="analyzeBtn" class="btn btn-primary">
+                    <i class="fas fa-brain"></i> Analyze Emotions
+                </button>
+                <button id="clearBtn" class="btn btn-secondary">
+                    <i class="fas fa-eraser"></i> Clear
+                </button>
+                <button id="historyBtn" class="btn btn-secondary">
+                    <i class="fas fa-history"></i> View History
+                </button>
+            </div>
+            
+            <!-- Quick Emoji Insert Buttons -->
+            <div style="margin-top: 1.5rem;">
+                <h3 style="font-size: 1rem; margin-bottom: 0.8rem; color: var(--gray);">
+                    <i class="fas fa-bolt"></i> Quick Emoji Insert
+                </h3>
+                <div class="emoji-quick-grid" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    <button class="emoji-quick-btn" onclick="insertEmoji('😄')">😄 Joy</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('😢')">😢 Sad</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('😡')">😡 Angry</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('❤️')">❤️ Love</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('😨')">😨 Fear</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('😲')">😲 Surprise</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('🎉')">🎉 Celebrate</button>
+                    <button class="emoji-quick-btn" onclick="insertEmoji('🤔')">🤔 Thinking</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card glass">
+            <h2><i class="fas fa-chart-bar"></i> Analysis Results</h2>
+            <div id="resultsContainer">
+                <div class="empty-state" style="text-align: center; padding: 3rem; color: var(--gray);">
+                    <div class="empty-icon" style="font-size: 4rem; margin-bottom: 1rem;">😊</div>
+                    <h3>Ready to Analyze!</h3>
+                    <p>Enter some text and click "Analyze Emotions" to see the results here.</p>
+                    <div class="tips-box" style="margin-top: 2rem; background: #f8fafc; padding: 1.5rem; border-radius: 15px; text-align: left;">
+                        <h4><i class="fas fa-lightbulb"></i> Tips for Best Results:</h4>
+                        <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                            <li>Include emojis for more accurate emotion detection</li>
+                            <li>Try different emotional expressions and phrases</li>
+                            <li>Check the history page for past analyses</li>
+                            <li>Use suggested emojis to enhance your text</li>
+                            <li>Click on emojis to copy them to clipboard</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Sample Texts -->
+                    <div class="samples-box" style="margin-top: 2rem; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 1.5rem; border-radius: 15px;">
+                        <h4><i class="fas fa-magic"></i> Try Sample Texts:</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem;">
+                            <button class="sample-btn" onclick="loadSample(0)">
+                                Happy News 😊
+                            </button>
+                            <button class="sample-btn" onclick="loadSample(1)">
+                                Sad Story 😢
+                            </button>
+                            <button class="sample-btn" onclick="loadSample(2)">
+                                Angry Rant 😡
+                            </button>
+                            <button class="sample-btn" onclick="loadSample(3)">
+                                Mixed Emotions 🎭
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emotion Legend -->
+    <div class="card glass" style="margin-top: 2rem;">
+        <h2><i class="fas fa-palette"></i> Emotion Color Guide</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div class="emotion-item joy">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😄</span>
+                    <div>
+                        <strong>Joy</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Happiness, excitement, delight</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item sadness">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😢</span>
+                    <div>
+                        <strong>Sadness</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Sorrow, grief, melancholy</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item anger">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😡</span>
+                    <div>
+                        <strong>Anger</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Frustration, rage, irritation</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item fear">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😨</span>
+                    <div>
+                        <strong>Fear</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Anxiety, worry, terror</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item surprise">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😲</span>
+                    <div>
+                        <strong>Surprise</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Astonishment, amazement</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item love">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">❤️</span>
+                    <div>
+                        <strong>Love</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Affection, care, admiration</div>
+                    </div>
+                </div>
+            </div>
+            <div class="emotion-item neutral">
+                <div style="display: flex; align-items: center; gap: 10px; padding: 0.8rem; border-radius: 10px;">
+                    <span style="font-size: 1.5rem;">😐</span>
+                    <div>
+                        <strong>Neutral</strong>
+                        <div style="font-size: 0.9rem; opacity: 0.8;">Indifference, calm, balanced</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- How It Works -->
+    <div class="card glass" style="margin-top: 2rem;">
+        <h2><i class="fas fa-cogs"></i> How It Works</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 1.5rem;">
+            <div style="text-align: center; padding: 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">1️⃣</div>
+                <h3 style="color: var(--primary);">Input Text</h3>
+                <p>Enter your text with or without emojis. The system will analyze both the text content and any emojis present.</p>
+            </div>
+            <div style="text-align: center; padding: 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">2️⃣</div>
+                <h3 style="color: var(--primary);">AI Analysis</h3>
+                <p>Our DistilBERT model analyzes the emotional content and provides confidence scores for 7 different emotions.</p>
+            </div>
+            <div style="text-align: center; padding: 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">3️⃣</div>
+                <h3 style="color: var(--primary);">Visual Results</h3>
+                <p>View detailed results including pie charts, emotion breakdowns, and suggested emojis based on detected emotions.</p>
+            </div>
+            <div style="text-align: center; padding: 1.5rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 1rem;">4️⃣</div>
+                <h3 style="color: var(--primary);">Save & Compare</h3>
+                <p>All analyses are saved to your history. Track emotional patterns and compare different texts over time.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Sample texts for quick testing
+const sampleTexts = [
+    "I'm absolutely thrilled! Just received the best news of my life! 😄🎉 My team won the championship and I got the MVP award! This is beyond amazing! 🏆✨ #blessed",
+    
+    "Having a really tough day today... 😔💔 Miss my family so much and everything feels overwhelming. The rain outside just makes it worse. ☔️ Just want to crawl into bed and sleep forever.",
+    
+    "I can't believe this happened! Absolutely furious right now! 😡🤬 The package was supposed to arrive yesterday, now they say it's lost! And customer service is useless! 💢 This is unacceptable!",
+    
+    "What a rollercoaster of emotions today! 😅 Got amazing feedback at work 🎯 but then my car broke down 🚗💨, then my friends surprised me with dinner! 🍽️❤️ So many feelings at once! 🎭"
+];
+
+// Function to insert emoji at cursor position
+function insertEmoji(emoji) {
+    const textarea = document.getElementById('textInput');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    
+    textarea.value = text.substring(0, start) + emoji + text.substring(end);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+    
+    // Optional: Show a small feedback
+    showQuickFeedback(`Added ${emoji}`);
+}
+
+// Function to load sample text
+function loadSample(index) {
+    if (index >= 0 && index < sampleTexts.length) {
+        const textarea = document.getElementById('textInput');
+        textarea.value = sampleTexts[index];
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
+        
+        // Auto-analyze the sample text
+        setTimeout(() => {
+            document.getElementById('analyzeBtn').click();
+        }, 500);
+    }
+}
+
+// Function to show quick feedback
+function showQuickFeedback(message) {
+    const feedback = document.createElement('div');
+    feedback.textContent = message;
+    feedback.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--success);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    `;
+    document.body.appendChild(feedback);
+    
+    setTimeout(() => {
+        feedback.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => feedback.remove(), 300);
+    }, 1500);
+}
+
+// Add CSS for animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    
+    .emoji-quick-btn {
+        padding: 0.5rem 1rem;
+        border: 2px solid var(--gray-light);
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.9rem;
+    }
+    
+    .emoji-quick-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+    
+    .sample-btn {
+        padding: 0.6rem 1.2rem;
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    
+    .sample-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+    }
+    
+    .emotion-item > div {
+        transition: transform 0.3s ease;
+    }
+    
+    .emotion-item:hover > div {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .joy > div { background: linear-gradient(135deg, #FFFBEB, #FEF3C7); }
+    .sadness > div { background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
+    .anger > div { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); }
+    .fear > div { background: linear-gradient(135deg, #FAF5FF, #F3E8FF); }
+    .surprise > div { background: linear-gradient(135deg, #FDF2F8, #FCE7F3); }
+    .love > div { background: linear-gradient(135deg, #FEF2F2, #FEE2E2); }
+    .neutral > div { background: linear-gradient(135deg, #F8FAFC, #F1F5F9); }
+`;
+document.head.appendChild(style);
+</script>
+
+<style>
+/* Additional styles for better responsiveness */
+@media (max-width: 768px) {
+    .main-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .header p {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+    
+    .card {
+        padding: 1.5rem;
+    }
+    
+    .text-input {
+        min-height: 150px;
+        font-size: 1rem;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .button-group .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .emoji-quick-grid {
+        justify-content: center;
+    }
+}
+
+/* Print styles */
+@media print {
+    .glass {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+    
+    .button-group,
+    .emoji-quick-grid,
+    .samples-box {
+        display: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --primary: #0000FF;
+        --secondary: #8B0000;
+    }
+    
+    .glass {
+        border: 2px solid black;
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+.text-input:focus,
+.emoji-quick-btn:focus,
+.sample-btn:focus {
+    outline: 3px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Loading state for buttons */
+.btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin: -8px 0 0 -8px;
+    border: 2px solid transparent;
+    border-top-color: white;
+    border-radius: 50%;
+    animation: button-spinner 0.6s linear infinite;
+}
+
+@keyframes button-spinner {
+    to {
+        transform: rotate(360deg);
+    }
+}
+</style>
+{% endblock %}
